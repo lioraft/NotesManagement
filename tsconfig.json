@@ -7,7 +7,6 @@
     "rootDir": "./src",
     "baseUrl": "src",
     "sourceMap": true,
-    "noImplicitAny": true
   },
   "include": ["src/**/*"]
 }
