@@ -6,6 +6,8 @@ import http from 'http';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 import mongoose from 'mongoose';
+// import routings
+import authRouter from './routes/auth'
 
 // initialize express instance
 const app = express();
@@ -22,21 +24,22 @@ app.use(cors({
 app.use(cookieParser());
 app.use(bodyParser.json());
 
-// initialize server instance
-const server = http.createServer(app);
-// listen on port 3500
-const port = process.env.PORT || 3500;
-server.listen(port, () => {
-    console.log("Server running on port:", port)
-})
+// routes definitions
+app.use("/auth", authRouter);
 
-// get url from .env file
-const mongoUrl = process.env.MONGO_URL;
 // connect to mongodb
-mongoose.connect(mongoUrl)
+mongoose.connect(process.env.MONGO_URL)
   .then(() => {
     console.log('Connected to MongoDB');
   })
   .catch((error) => {
     console.error('Error connecting to MongoDB:', error);
   });
+
+// initialize server instance
+const server = http.createServer(app);
+// listen on port 3500
+const port = process.env.PORT || 3500;
+server.listen(port, () => {
+    console.log("Server running on port:", port)
+});

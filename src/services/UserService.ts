@@ -4,10 +4,19 @@ import UserModel from '../models/UserModel';
 export const getUsers = async () => UserModel.find();
 
 // get user by username
-export const getUserByUsername = async (username: string) => UserModel.findOne({ username });
+export const getUserByUsername = async (username: string) => {
+  return await UserModel.findOne({ username }).exec();
+};
 
 // add new user
-export const addUser = async (record: Record<string, any>) => new UserModel(record).save().then((user) => user.toObject());
+export const addUser = async (record: { username: string; password: string }) => {
+    // create a new user
+    const newUser = new UserModel(record);
+    // save the new user to db
+    const savedUser = await newUser.save();
+    // return the saved user object
+    return savedUser.toObject();
+};
 
 // get all subscriptions for a user by username
 export const getSubscriptions = async (username: string) => {
