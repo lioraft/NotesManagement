@@ -6,12 +6,7 @@ const NoteSchema = new Schema({
     title: { type: String, required: true },
     body: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
-    sentiments: [
-        {
-            sentiment: { type: String },
-            confidence: { type: Number },
-        },
-    ],
+    sentimentAnalysis: { type: mongoose.Schema.Types.ObjectId, ref: 'SentimentAnalysis' }, // reference to sentiment analysis
 });
 
 export default NoteSchema;

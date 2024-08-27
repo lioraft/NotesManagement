@@ -6,6 +6,7 @@ const UserSchema: Schema = new Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     subscriptions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: [] }],
+    lastCreatedNote: { type: mongoose.Schema.Types.ObjectId, ref: 'Note', default: null },
   });
 
 export default UserSchema;

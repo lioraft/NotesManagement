@@ -23,12 +23,16 @@ noteRouter.post('/', async (req, res) => {
             // create a new note with the converted ObjectId
             const newNote = { userId, title, body };
             const createdNote = await addNote(newNote);
+            // if note is null, return can't create
+            if (!newNote) {
+                res.status(400).json({ success: false, message: 'Invalid input data' });
+            }
             res.status(201).json(createdNote);
         } else {
-            res.status(400).json({ error: 'User ID not found in local storage' });
+            res.status(400).json({ error: 'User ID not found in request' });
         }
     } catch (error) {
-        res.status(500).json({ error: 'Error during creation of note' });
+        res.status(500).json({ error: 'Internal error during creation of note' });
     }
 });
 

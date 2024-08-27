@@ -38,10 +38,6 @@ declare module 'express-serve-static-core' {
 
 // define middleware for authentication of users
 app.use(function (req: Request, res: Response, next: NextFunction) {
-  //skip authentication for /auth routes
-  if (req.path.startsWith('/auth')) {
-    return next();
-  }
   try {
     // get token from session
     const token = req.cookies.token;

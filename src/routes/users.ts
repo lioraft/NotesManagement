@@ -19,7 +19,6 @@ userRouter.get('/', async (req, res) => {
         // return subscriptions
         res.status(200).json({ success: true, subscriptions });
     } catch (error) {
-        console.error('Error subscribing to user:', error);
         res.status(500).send({ message: error.message, success: false });
     }
 });

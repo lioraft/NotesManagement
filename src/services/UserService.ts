@@ -23,7 +23,7 @@ export const addUser = async (record: { username: string; password: string }) =>
 
 // get all subscriptions for a user by user id
 export const getSubscriptions = async (userId: mongoose.Types.ObjectId) => {
-    // find the user by username and populate the subscriptions
+    // find the user by user id and populate the subscriptions
     const user = await UserModel.findById(userId).populate('subscriptions', 'username');
     // return the list of subscriptions
     return user.subscriptions;
@@ -53,4 +53,9 @@ export const subscribeToUser = async (subscriberUserID: mongoose.Types.ObjectId,
     await UserModel.updateOne({ _id: subscriber._id }, { subscriptions: subscriber.subscriptions });
 
     return subscriber.subscriptions;
+};
+
+export const getUserProfile = async (userId: mongoose.Types.ObjectId) => {
+  // find the user by user id and populate the subscriptions, then return user
+  return await UserModel.findById(userId).populate('subscriptions', 'username');
 };
