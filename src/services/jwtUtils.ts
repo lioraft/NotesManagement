@@ -4,8 +4,8 @@ import jwt from 'jsonwebtoken';
 const secret = process.env.JWT || 'default';
 
 // generate a token for user
-export const generateToken = (username: string): string => {
-    return jwt.sign({ id: username }, secret, { expiresIn: '1h' });
+export const generateToken = (userId: string): string => {
+    return jwt.sign({ id: userId }, secret, { expiresIn: '1h' });
 };
 
 // verify a token of a user

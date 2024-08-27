@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { getUserByUsername, addUser } from '../services/UserService';
-import { generateToken, verifyToken} from '../services/jwtUtils'
+import { generateToken } from '../services/jwtUtils'
 
 // create a router
 const authRouter = Router();
@@ -57,8 +57,14 @@ authRouter.post("/register", async (req, res) => {
             return res.status(401).send({ message: 'Invalid username or password', success: false });
         }
         // generate token and return it in response
-        const token = generateToken(username);
-        res.status(200).send({ message: 'Login successful', success: true, token });
+        const token = generateToken(user._id.toString());
+        // set token as a cookie
+        res.cookie('token', token, {
+            httpOnly: true,  
+            secure: process.env.NODE_ENV === 'production',  
+            sameSite: 'strict',
+        });
+        res.status(200).send({ message: 'Login successful', success: true });
     } catch (error) {
         console.error('Unexpected error:', error);
         res.status(500).send({ message: 'Internal server error', success: false });

@@ -6,8 +6,11 @@ import http from 'http';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import { verifyToken } from './services/jwtUtils';
+import { Request, Response, NextFunction } from 'express';
 // import routings
 import authRouter from './routes/auth'
+import noteRouter from './routes/notes'
 
 // initialize express instance
 const app = express();
@@ -24,8 +27,41 @@ app.use(cors({
 app.use(cookieParser());
 app.use(bodyParser.json());
 
+// userId as property in requests
+declare module 'express-serve-static-core' {
+  interface Request {
+      userId?: string;
+  }
+}
+
+// define middleware for authentication of users
+app.use(function (req: Request, res: Response, next: NextFunction) {
+  //skip authentication for /auth routes
+  if (req.path.startsWith('/auth')) {
+    return next();
+  }
+  console.log('Middleware activated');
+  try {
+    // get token from session
+    const token = req.cookies.token;
+    // try to verify user
+    const userId = verifyToken(token);
+    // if not verified, return error
+    if (!userId) {
+      return res.status(401).send({ message: 'Not authorized', success: false });
+    }
+    // if user verified, continue to next routing
+    req.userId = userId;
+    next();
+  } catch(err) {
+      console.error('Unexpected error:', err);
+      res.status(500).send({ message: 'Internal server error', success: false });
+  }
+});
+
 // routes definitions
 app.use("/auth", authRouter);
+app.use("/notes", noteRouter);
 
 // connect to mongodb
 mongoose.connect(process.env.MONGO_URL)
