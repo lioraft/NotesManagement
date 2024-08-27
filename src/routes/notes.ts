@@ -46,7 +46,7 @@ noteRouter.get('/', async (req, res) => {
         res.status(200).json({ success: true, notes });
       }
       else{
-        res.status(400).json({ error: 'User ID not found in local storage' });
+        res.status(400).json({ error: 'User ID not found in request' });
       }
     } catch (error) {
       res.status(500).json({ success: false, message: 'Failed to retrieve notes' });

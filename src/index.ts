@@ -9,8 +9,10 @@ import mongoose from 'mongoose';
 import { verifyToken } from './services/jwtUtils';
 import { Request, Response, NextFunction } from 'express';
 // import routings
-import authRouter from './routes/auth'
-import noteRouter from './routes/notes'
+import authRouter from './routes/auth';
+import noteRouter from './routes/notes';
+import subRouter from './routes/subscribe';
+import userRouter from './routes/users';
 
 // initialize express instance
 const app = express();
@@ -40,7 +42,6 @@ app.use(function (req: Request, res: Response, next: NextFunction) {
   if (req.path.startsWith('/auth')) {
     return next();
   }
-  console.log('Middleware activated');
   try {
     // get token from session
     const token = req.cookies.token;
@@ -62,6 +63,8 @@ app.use(function (req: Request, res: Response, next: NextFunction) {
 // routes definitions
 app.use("/auth", authRouter);
 app.use("/notes", noteRouter);
+app.use("/subscribe", subRouter);
+app.use("/users", userRouter);
 
 // connect to mongodb
 mongoose.connect(process.env.MONGO_URL)
