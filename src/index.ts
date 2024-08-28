@@ -13,6 +13,8 @@ import authRouter from './routes/auth';
 import noteRouter from './routes/notes';
 import subRouter from './routes/subscribe';
 import userRouter from './routes/users';
+// import socket.io for web socket functionality
+import { Server } from 'socket.io';
 
 // initialize express instance
 const app = express();
@@ -38,6 +40,11 @@ declare module 'express-serve-static-core' {
 
 // define middleware for authentication of users
 app.use(function (req: Request, res: Response, next: NextFunction) {
+    // skip authentication for specific routes
+    const unprotectedPaths = ['/auth/login', '/auth/register'];
+    if (unprotectedPaths.includes(req.path)) {
+      return next();
+    }
   try {
     // get token from session
     const token = req.cookies.token;
@@ -73,8 +80,27 @@ mongoose.connect(process.env.MONGO_URL)
 
 // initialize server instance
 const server = http.createServer(app);
+// setup of websocket server
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+});
+
+// log connections to console
+io.on('connection', (socket) => {
+  console.log('A user connected');
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+  });
+});
+
 // listen on port 3500
 const port = process.env.PORT || 3500;
 server.listen(port, () => {
     console.log("Server running on port:", port)
 });
+
+// export the io for using it in notes updates in real time
+export { io };

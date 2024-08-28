@@ -17,6 +17,8 @@ subRouter.post('/:userId', async (req, res) => {
         }
         // subscribe the authenticated user to the target user
         const updatedSubscriptions = await subscribeToUser(new mongoose.Types.ObjectId(subscriberUserID), subscriptionUserID);
+        // log to console
+        console.log("the user:", subscriberUserID, "subscribed to:", subscriptionUserID);
         // return the updated list of subscriptions
         res.status(200).send({ message: 'Subscription successful', success: true, subscriptions: updatedSubscriptions });
     } catch (error) {

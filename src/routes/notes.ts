@@ -27,11 +27,14 @@ noteRouter.post('/', async (req, res) => {
             if (!newNote) {
                 res.status(400).json({ success: false, message: 'Invalid input data' });
             }
-            res.status(201).json(createdNote);
+            // if success log to console and send
+            console.log("A new note: ", createdNote._id," was created by:", userIdString)
+            res.status(201).json({success: true, createdNote});
         } else {
             res.status(400).json({ error: 'User ID not found in request' });
         }
     } catch (error) {
+        console.log("Error while creating a new note");
         res.status(500).json({ error: 'Internal error during creation of note' });
     }
 });
@@ -46,6 +49,8 @@ noteRouter.get('/', async (req, res) => {
         const userId = new mongoose.Types.ObjectId(userIdString);
         // retrieve the notes for the authenticated user
         const notes = await getNotes(userId);
+        // log to console
+        console.log("fetched notes for user:", userIdString);
         // return notes
         res.status(200).json({ success: true, notes });
       }
@@ -53,7 +58,8 @@ noteRouter.get('/', async (req, res) => {
         res.status(400).json({ error: 'User ID not found in request' });
       }
     } catch (error) {
-      res.status(500).json({ success: false, message: 'Failed to retrieve notes' });
+        console.log("Failed to fetch notes");
+        res.status(500).json({ success: false, message: 'Failed to retrieve notes' });
     }
   });
 
@@ -72,9 +78,12 @@ noteRouter.get('/:id', async (req, res) => {
         if (!note) {
             return res.status(404).send({ message: 'Note not found', success: false });
         }
+        // log to console
+        console.log("fetched note:", id)
         // return the found note
         res.status(200).send({ note, success: true });
     } catch (error) {
+        console.log("Failed to fetch a note");
         res.status(500).send({ message: 'Internal server error while retrieving note', success: false });
     }
 });

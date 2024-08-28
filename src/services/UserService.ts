@@ -56,6 +56,15 @@ export const subscribeToUser = async (subscriberUserID: mongoose.Types.ObjectId,
 };
 
 export const getUserProfile = async (userId: mongoose.Types.ObjectId) => {
-  // find the user by user id and populate the subscriptions, then return user
-  return await UserModel.findById(userId).populate('subscriptions', 'username');
+  // populate profile with nested calls to fetch the data
+  return await UserModel.findById(userId)
+    .select('-password') // exclude the password field
+    .populate('subscriptions', 'username') // populating subscriptions with username 
+    .populate({
+      path: 'lastCreatedNote', // populate with the last created note
+      populate: {
+        path: 'sentimentAnalysis', // further populate the sentimentAnalysis
+        model: 'SentimentAnalysis' // reference to the SentimentAnalysis model
+      }
+    });
 };

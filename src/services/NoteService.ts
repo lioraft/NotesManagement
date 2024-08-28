@@ -4,6 +4,7 @@ import { SentimentAnalysisModel } from '../models/SentimentAnalysisModel';
 import mongoose from "mongoose";
 import axios from 'axios';
 import FormData from 'form-data';
+import { io } from '../index';
 
 // helper function to get sentiment analysis of note
 async function analyzeSentiment(noteText: string) {
@@ -51,6 +52,8 @@ export const addNote = async (record: { userId: mongoose.Types.ObjectId, title: 
     const savedNote = await newNote.save();
     // update the user's lastNote field
     await UserModel.findByIdAndUpdate(record.userId, { lastCreatedNote: savedNote._id });
+    // emit the new note to all connected clients. when creating client side, there should be event of socket.on('newNote',...)
+    io.emit('newNote', newNote);
     // return the saved note object
     return savedNote.toObject();
 };

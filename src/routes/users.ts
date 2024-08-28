@@ -16,9 +16,12 @@ userRouter.get('/', async (req, res) => {
         }
         // get subscriptions
         const subscriptions = await getSubscriptions(new mongoose.Types.ObjectId(userId));
+        // log to console
+        console.log("fetched users for:", userId)
         // return subscriptions
         res.status(200).json({ success: true, subscriptions });
     } catch (error) {
+        console.log("failed fetching users");
         res.status(500).send({ message: error.message, success: false });
     }
 });

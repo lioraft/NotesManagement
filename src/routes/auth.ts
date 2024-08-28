@@ -30,10 +30,12 @@ authRouter.post("/register", async (req, res) => {
         const record = { username, password: hashedPassword };
         // create a new user
         const newUser = await addUser(record);
+        // log creation of a new user to console
+        console.log("A new user was created:", username)
         // success message
         return res.status(201).send({ message: 'User created', success: true, user: newUser});
     } catch (error) {
-        console.error('Unexpected error:', error);
+        console.error('Unexpected error while registering a user:', error);
         res.status(500).send({ message: 'Internal server error', success: false });
     }
 });
@@ -66,9 +68,11 @@ try {
         secure: process.env.NODE_ENV === 'production',  
         sameSite: 'strict',
     });
+    // log successful login to console and return response
+    console.log(username, " logged in");
     res.status(200).send({ message: 'Login successful', success: true });
 } catch (error) {
-    console.error('Unexpected error:', error);
+    console.error('Unexpected error while login:', error);
     res.status(500).send({ message: 'Internal server error', success: false });
 }
 });
@@ -82,24 +86,18 @@ authRouter.get('/profile', async (req, res) => {
         // convert userIdString to objectId
         const userId = new mongoose.Types.ObjectId(userIdString);
         // retrieve the user profile
-        const user = await getUserProfile(userId);
-        // TO ADD: SENTIMENT ANALYSIS
-        // get user's personal notes
-        // const notes = await getUserNotes(userId);
-        // // combine response
-        // const userProfile = {
-        //     username: user.username,
-        //     subscriptions: user.subscriptions,
-        //     notes: notes
-        // };
-        // // return profile
-        // res.status(200).json({ success: true, user: userProfile });
+        const userProfile = await getUserProfile(userId);
+        // log to console
+        console.log("fetched profile of user:", userIdString);
+        // return profile
+        res.status(200).json({ success: true, user: userProfile });
       }
       else{
         res.status(400).json({ error: 'User ID not found in request' });
       }
     } catch (error) {
-      res.status(500).json({ success: false, message: 'Failed to retrieve user profile' });
+        console.log("Error while fetching user profile:", error)
+        res.status(500).json({ success: false, message: 'Failed to retrieve user profile' });
     }
   });
 
