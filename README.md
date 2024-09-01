@@ -31,4 +31,6 @@ Assumptions I made for this assignment:
 5. To run tests, run the following command
    ```bash
    npm test
-   
+6. To see documentation, enter the following end point:
+   ``` bash
+   http://localhost:3500/api-docs
