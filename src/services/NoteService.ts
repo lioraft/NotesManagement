@@ -7,9 +7,6 @@ import FormData from 'form-data';
 import { io } from '../index';
 import { ValidationError, NotFoundError } from '../error';
 
-// helper function to validate MongoDB ObjectId
-const isValidObjectId = (id: any): boolean => mongoose.Types.ObjectId.isValid(id);
-
 // helper function to get sentiment analysis of note
 export async function analyzeSentiment(noteText: string) {
     // if input not valid, throw validation error
@@ -55,27 +52,37 @@ export async function analyzeSentiment(noteText: string) {
 }
 
 // function to create a new note
-export const addNote = async (record: { userId: mongoose.Types.ObjectId, title: string, body: string }) => {
+export const addNote = async (userIdString: string, title: string, body: string) => {
     // validate inputs
-    if (!record.userId || !record.title || !record.body || !isValidObjectId(record.userId)) {
+    if (!userIdString || !title || !body) {
         throw new ValidationError('Missing required fields');
     }
+    // try to convert to moongose object id, if can't - throw validation error
+    let userId;
+    try {
+      userId = new mongoose.Types.ObjectId(userIdString);
+    } catch(error) {
+      throw new ValidationError('Invalid ObjectId');
+    }
     // analyze sentiment and get the ID of the SentimentAnalysis 
-    const sentimentAnalysisId = await analyzeSentiment(record.body);
+    const sentimentAnalysisId = await analyzeSentiment(body);
     // create a new note 
     const newNote = new NoteModel({
-        ...record,
+        userId: userId,
+        title: title,
+        body: body,
         sentimentAnalysis: sentimentAnalysisId, // reference to the SentimentAnalysis
     });
     // save the new note to db
     const savedNote = await newNote.save();
     // update the user's lastNote field
-    const userUpdateResult = await UserModel.findByIdAndUpdate(record.userId, { lastCreatedNote: savedNote._id });
+    const userUpdateResult = await UserModel.findByIdAndUpdate(userId, { lastCreatedNote: savedNote._id });
     // if user not found, throw error
     if (!userUpdateResult) {
         await NoteModel.findByIdAndDelete(savedNote._id); // delete the note if user is not found
         throw new NotFoundError('Invalid user ID');
     }
+    // websocket functionality
     // emit the new note to all connected clients. when creating client side, there should be event of socket.on('newNote',...)
     io.emit('newNote', newNote);
     // return the saved note object
@@ -83,9 +90,16 @@ export const addNote = async (record: { userId: mongoose.Types.ObjectId, title: 
 };
 
 // function to get all notes from users that the user is subscribed to, including the user's own notes
-export const getNotes = async (userId: mongoose.Types.ObjectId) => {
-    if (!userId || !isValidObjectId(userId)) {
-        throw new ValidationError('Invalid user ID');
+export const getNotes = async (userIdString: string) => {
+    if (!userIdString) {
+        throw new ValidationError('No UserID');
+    }
+    // try to convert to moongose object id, if can't - throw validation error
+    let userId;
+    try {
+      userId = new mongoose.Types.ObjectId(userIdString);
+    } catch(error) {
+      throw new ValidationError('Invalid ObjectId');
     }
     // find the user by ID and get their subscriptions (which are user IDs)
     const user = await UserModel.findById(userId).select('subscriptions').exec();
@@ -104,14 +118,29 @@ export const getNotes = async (userId: mongoose.Types.ObjectId) => {
 };
 
 // function to get a specific note by its ID
-export const getNoteById = async (noteId: mongoose.Types.ObjectId) => {
-    // check note id is valid
-    if (!noteId || !isValidObjectId(noteId)) {
-        throw new ValidationError('Invalid note ID');
+export const getNoteById = async (noteIdString: string) => {
+    if (!noteIdString) {
+        throw new ValidationError('No Note ID');
+    }
+    // try to convert to moongose object id, if can't - throw validation error
+    let noteId;
+    try {
+        noteId = new mongoose.Types.ObjectId(noteIdString);
+    } catch(error) {
+      throw new ValidationError('Invalid ObjectId');
     }
     const note = await NoteModel.findById(noteId).exec();
     if (!note) {
         throw new NotFoundError('Note not found');
     }
-    return note;
+    // fetch sentiment analysis if it exists
+    let sentimentAnalysis = null;
+    if (note.sentimentAnalysis) {
+        sentimentAnalysis = await SentimentAnalysisModel.findById(note.sentimentAnalysis).exec();
+    }
+    // return note and it's sentiment analysis
+    return {
+        note: note.toObject(),
+        sentimentAnalysis: sentimentAnalysis ? sentimentAnalysis.toObject() : null
+    };
 };

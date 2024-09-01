@@ -23,6 +23,11 @@ afterAll(async () => {
   }
 });
 
+beforeEach(async() => {
+  // reset mocks before each test
+  jest.clearAllMocks();
+});
+
 // clear the database after each test
 afterEach(async () => {
   const collections = mongoose.connection.collections;

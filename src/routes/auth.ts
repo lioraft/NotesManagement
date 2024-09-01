@@ -1,9 +1,8 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { getUserByUsername, addUser, getUserProfile } from '../services/UserService';
-import { NotFoundError } from '../error';
+import { returnError, NotFoundError } from '../error';
 import { generateToken } from '../services/jwtUtils'
-import mongoose from 'mongoose';
 
 // create a router
 const authRouter = Router();
@@ -93,28 +92,23 @@ try {
 authRouter.get('/profile', async (req, res) => {
     try {
       // get userid
-      const userIdString = req.userId;
-      if (userIdString) {
-        // convert userIdString to objectId
-        const userId = new mongoose.Types.ObjectId(userIdString);
+      const userId = req.userId;
+      if (userId) {
         // retrieve the user profile
         const userProfile = await getUserProfile(userId);
         // log to console
-        console.log("fetched profile of user:", userIdString);
+        console.log("fetched profile of user:", userId);
         // return profile
         res.status(200).json({ success: true, user: userProfile });
       }
-      else{
+      else {
         res.status(400).json({ error: 'User ID not found in request' });
       }
     } catch (error) {
-        // if not found error, return not found error message
-        if (error instanceof NotFoundError) {
-            return res.status(404).json({ message: 'User not found', success: false });
-        }
-        // if other error, return it and log to console
+        // if error, return it and log to console
         console.log("Error while fetching user profile:", error);
-        res.status(500).json({ message: 'Failed to retrieve user profile', success: false });
+        // return error message
+        return returnError(error, res);
     }
   });
 

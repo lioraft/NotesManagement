@@ -1,7 +1,6 @@
 import { Router } from 'express';
-import mongoose from 'mongoose';
 import { getNoteById, getNotes, addNote } from '../services/NoteService';
-import { NotFoundError, ValidationError } from '../error';
+import { returnError } from '../error';
 
 // create a router
 const noteRouter = Router();
@@ -17,13 +16,10 @@ noteRouter.post('/', async (req, res) => {
         }
         // get userid 
         const userIdString = req.userId;
-        // check if userIdString is not null
+        // check if userId is not null
         if (userIdString) {
-            // convert userIdString to ObjectId
-            const userId = new mongoose.Types.ObjectId(userIdString);
             // create a new note with the converted ObjectId
-            const newNote = { userId, title, body };
-            const createdNote = await addNote(newNote);
+            const createdNote = await addNote(userIdString, title, body);
             // if success log to console and send
             console.log("A new note: ", createdNote._id," was created by:", userIdString)
             res.status(201).json({success: true, createdNote});
@@ -33,13 +29,7 @@ noteRouter.post('/', async (req, res) => {
     } catch (error) {
         // log error to console
         console.error('Error while adding a new note:', error);
-        if (error instanceof ValidationError) {
-            res.status(400).json({ error: error.message });
-        } else if (error instanceof NotFoundError) {
-            res.status(404).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: 'Internal error during note creation' });
-        }
+        return returnError(error, res);
     }
 });
 
@@ -49,10 +39,8 @@ noteRouter.get('/', async (req, res) => {
       // get userid
       const userIdString = req.userId;
       if (userIdString) {
-        // convert userIdString to objectId
-        const userId = new mongoose.Types.ObjectId(userIdString);
         // retrieve the notes for the authenticated user
-        const notes = await getNotes(userId);
+        const notes = await getNotes(userIdString);
         // log to console
         console.log("fetched notes for user:", userIdString);
         // return notes
@@ -64,13 +52,7 @@ noteRouter.get('/', async (req, res) => {
     } catch (error) {
         // log error to console
         console.error('Error while fetching notes:', error);
-        if (error instanceof ValidationError) {
-            res.status(400).json({ error: error.message });
-        } else if (error instanceof NotFoundError) {
-            res.status(404).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: 'Internal error while fetching notes' });
-        }
+        return returnError(error, res);
     }
   });
 
@@ -79,26 +61,16 @@ noteRouter.get('/:id', async (req, res) => {
     try {
         // get id of note
         const { id } = req.params;
-        // validate the note ID
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).send({ message: 'Invalid note ID', success: false });
-        }
-        // retrieve the note using the ID
-        const note = await getNoteById(new mongoose.Types.ObjectId(id));
+        // retrieve the note and sentiment analysis using the ID
+        const { note, sentimentAnalysis } = await getNoteById(id);
         // log to console
         console.log("fetched note:", id)
         // return the found note
-        res.status(200).send({ note, success: true });
+        res.status(200).send({ note, sentimentAnalysis, success: true });
     } catch (error) {
         // log error to console
         console.error('Internal server error while retrieving note:', error);
-        if (error instanceof ValidationError) {
-            res.status(400).json({ error: error.message });
-        } else if (error instanceof NotFoundError) {
-            res.status(404).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: 'Internal error while retrieving note' });
-        }
+        return returnError(error, res);
     }
 });
 

@@ -1,0 +1,887 @@
+<!doctype html>
+<html>
+  <head>
+    <title>User Authentication and Notes Management API</title>
+    <style type="text/css">
+      body {
+      	font-family: Trebuchet MS, sans-serif;
+      	font-size: 15px;
+      	color: #444;
+      	margin-right: 24px;
+      }
+      
+      h1	{
+      	font-size: 25px;
+      }
+      h2	{
+      	font-size: 20px;
+      }
+      h3	{
+      	font-size: 16px;
+      	font-weight: bold;
+      }
+      hr	{
+      	height: 1px;
+      	border: 0;
+      	color: #ddd;
+      	background-color: #ddd;
+      }
+      
+      .app-desc {
+        clear: both;
+        margin-left: 20px;
+      }
+      .param-name {
+        width: 100%;
+      }
+      .license-info {
+        margin-left: 20px;
+      }
+      
+      .license-url {
+        margin-left: 20px;
+      }
+      
+      .model {
+        margin: 0 0 0px 20px;
+      }
+      
+      .method {
+        margin-left: 20px;
+      }
+      
+      .method-notes	{
+      	margin: 10px 0 20px 0;
+      	font-size: 90%;
+      	color: #555;
+      }
+      
+      pre {
+        padding: 10px;
+        margin-bottom: 2px;
+      }
+      
+      .http-method {
+       text-transform: uppercase;
+      }
+      
+      pre.get {
+        background-color: #0f6ab4;
+      }
+      
+      pre.post {
+        background-color: #10a54a;
+      }
+      
+      pre.put {
+        background-color: #c5862b;
+      }
+      
+      pre.delete {
+        background-color: #a41e22;
+      }
+      
+      .huge	{
+      	color: #fff;
+      }
+      
+      pre.example {
+        background-color: #f3f3f3;
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+      
+      code {
+        white-space: pre;
+      }
+      
+      .nickname {
+        font-weight: bold;
+      }
+      
+      .method-path {
+        font-size: 1.5em;
+        background-color: #0f6ab4;
+      }
+      
+      .up {
+        float:right;
+      }
+      
+      .parameter {
+        width: 500px;
+      }
+      
+      .param {
+        width: 500px;
+        padding: 10px 0 0 20px;
+        font-weight: bold;
+      }
+      
+      .param-desc {
+        width: 700px;
+        padding: 0 0 0 20px;
+        color: #777;
+      }
+      
+      .param-type {
+        font-style: italic;
+      }
+      
+      .param-enum-header {
+      width: 700px;
+      padding: 0 0 0 60px;
+      color: #777;
+      font-weight: bold;
+      }
+      
+      .param-enum {
+      width: 700px;
+      padding: 0 0 0 80px;
+      color: #777;
+      font-style: italic;
+      }
+      
+      .field-label {
+        padding: 0;
+        margin: 0;
+        clear: both;
+      }
+      
+      .field-items	{
+      	padding: 0 0 15px 0;
+      	margin-bottom: 15px;
+      }
+      
+      .return-type {
+        clear: both;
+        padding-bottom: 10px;
+      }
+      
+      .param-header {
+        font-weight: bold;
+      }
+      
+      .method-tags {
+        text-align: right;
+      }
+      
+      .method-tag {
+        background: none repeat scroll 0% 0% #24A600;
+        border-radius: 3px;
+        padding: 2px 10px;
+        margin: 2px;
+        color: #FFF;
+        display: inline-block;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+  <h1>User Authentication and Notes Management API</h1>
+    <div class="app-desc">User Authentication and Notes Management API</div>
+    <div class="app-desc">More information: <a href="https://helloreverb.com">https://helloreverb.com</a></div>
+    <div class="app-desc">Contact Info: <a href="lioraftabi@gmail.com">lioraftabi@gmail.com</a></div>
+    <div class="app-desc">Version: 1.0.0</div>
+    <div class="app-desc">BasePath:/LiorAftabi/NotesManagement/1.0.0</div>
+    <div class="license-info">Apache 2.0</div>
+    <div class="license-url">http://www.apache.org/licenses/LICENSE-2.0.html</div>
+  <h2>Access</h2>
+
+  <h2><a name="__Methods">Methods</a></h2>
+  [ Jump to <a href="#__Models">Models</a> ]
+
+  <h3>Table of Contents </h3>
+  <div class="method-summary"></div>
+  <h4><a href="#Auth">Auth</a></h4>
+  <ul>
+  <li><a href="#authLoginPost"><code><span class="http-method">post</span> /auth/login</code></a></li>
+  <li><a href="#authRegisterPost"><code><span class="http-method">post</span> /auth/register</code></a></li>
+  <li><a href="#profileGet"><code><span class="http-method">get</span> /profile</code></a></li>
+  </ul>
+  <h4><a href="#Notes">Notes</a></h4>
+  <ul>
+  <li><a href="#notesGet"><code><span class="http-method">get</span> /notes</code></a></li>
+  <li><a href="#notesIdGet"><code><span class="http-method">get</span> /notes/{id}</code></a></li>
+  <li><a href="#notesPost"><code><span class="http-method">post</span> /notes</code></a></li>
+  </ul>
+  <h4><a href="#Subscribe">Subscribe</a></h4>
+  <ul>
+  <li><a href="#subscribeUserIdPost"><code><span class="http-method">post</span> /subscribe/{userId}</code></a></li>
+  </ul>
+  <h4><a href="#Users">Users</a></h4>
+  <ul>
+  <li><a href="#usersGet"><code><span class="http-method">get</span> /users</code></a></li>
+  </ul>
+
+  <h1><a name="Auth">Auth</a></h1>
+  <div class="method"><a name="authLoginPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /auth/login</code></pre></div>
+    <div class="method-summary">Log in a user (<span class="nickname">authLoginPost</span>)</div>
+    <div class="method-notes">Authenticates a user and returns a JWT token.</div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#auth_login_body">auth_login_body</a> (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+                </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#inline_response_200">inline_response_200</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "success" : true,
+  "message" : "message"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Login successful
+        <a href="#inline_response_200">inline_response_200</a>
+    <h4 class="field-label">400</h4>
+    Bad request, missing username or password
+        <a href="#"></a>
+    <h4 class="field-label">401</h4>
+    Unauthorized, invalid username or password
+        <a href="#"></a>
+    <h4 class="field-label">500</h4>
+    Internal server error
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="authRegisterPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /auth/register</code></pre></div>
+    <div class="method-summary">Register a new user (<span class="nickname">authRegisterPost</span>)</div>
+    <div class="method-notes">Creates a new user with a username and password.</div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#auth_register_body">auth_register_body</a> (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+                </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#inline_response_201">inline_response_201</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "success" : true,
+  "message" : "message",
+  "user" : {
+    "username" : "johndoe",
+    "password" : "securepassword123",
+    "subscriptions" : [ "60c72b2f9b1e8f001f6472f5", "60c72b2f9b1e8f001f6472f6" ],
+    "lastCreatedNote" : "60c72b2f9b1e8f001f6472f7"
+  }
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">201</h4>
+    User created successfully
+        <a href="#inline_response_201">inline_response_201</a>
+    <h4 class="field-label">400</h4>
+    Bad request, missing username or password
+        <a href="#"></a>
+    <h4 class="field-label">409</h4>
+    Conflict, username already taken
+        <a href="#"></a>
+    <h4 class="field-label">500</h4>
+    Internal server error
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="profileGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /profile</code></pre></div>
+    <div class="method-summary">Retrieve user profile (<span class="nickname">profileGet</span>)</div>
+    <div class="method-notes">Fetches the user profile including username, subscriptions, and last note sentiment analysis.</div>
+
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#inline_response_200_1">inline_response_200_1</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "success" : true,
+  "user" : {
+    "username" : "johndoe",
+    "password" : "securepassword123",
+    "subscriptions" : [ "60c72b2f9b1e8f001f6472f5", "60c72b2f9b1e8f001f6472f6" ],
+    "lastCreatedNote" : "60c72b2f9b1e8f001f6472f7"
+  }
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    User profile fetched successfully
+        <a href="#inline_response_200_1">inline_response_200_1</a>
+    <h4 class="field-label">400</h4>
+    Bad request, user ID not found in request
+        <a href="#"></a>
+    <h4 class="field-label">404</h4>
+    Not found, user profile not found
+        <a href="#"></a>
+    <h4 class="field-label">500</h4>
+    Internal server error
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <h1><a name="Notes">Notes</a></h1>
+  <div class="method"><a name="notesGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /notes</code></pre></div>
+    <div class="method-summary">Get notes for authenticated user (<span class="nickname">notesGet</span>)</div>
+    <div class="method-notes">Retrieves notes created by the authenticated user or by users they are subscribed to.</div>
+
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#inline_response_200_4">inline_response_200_4</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "notes" : {
+    "userId" : "60c72b2f9b1e8f001f6472f8",
+    "title" : "Meeting Notes",
+    "body" : "Notes from the project meeting on 2024-09-01. Discussed the upcoming deadlines and responsibilities.",
+    "createdAt" : "2024-09-01T10:00:00Z",
+    "sentimentAnalysis" : "60c72b2f9b1e8f001f6472f9"
+  },
+  "success" : true
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successfully retrieved notes
+        <a href="#inline_response_200_4">inline_response_200_4</a>
+    <h4 class="field-label">400</h4>
+    Bad request, user not valid
+        <a href="#"></a>
+    <h4 class="field-label">404</h4>
+    Not found, user does not exist
+        <a href="#"></a>
+    <h4 class="field-label">500</h4>
+    Internal server error
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="notesIdGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /notes/{id}</code></pre></div>
+    <div class="method-summary">Get note by ID (<span class="nickname">notesIdGet</span>)</div>
+    <div class="method-notes">Retrieves a specific note by its ID.</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">id (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The ID of the note to retrieve. format: uuid</div>    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#inline_response_200_5">inline_response_200_5</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "note" : {
+    "userId" : "60c72b2f9b1e8f001f6472f8",
+    "title" : "Meeting Notes",
+    "body" : "Notes from the project meeting on 2024-09-01. Discussed the upcoming deadlines and responsibilities.",
+    "createdAt" : "2024-09-01T10:00:00Z",
+    "sentimentAnalysis" : "60c72b2f9b1e8f001f6472f9"
+  },
+  "sentimentAnalysis" : {
+    "overall_sentiment" : "Positive",
+    "agreement" : "High",
+    "subjectivity" : "Subjective",
+    "confidence" : 0.85,
+    "irony" : "None",
+    "sentimented_entities" : [ {
+      "form" : "New York",
+      "id" : "60c72b2f9b1e8f001f6472f5",
+      "type" : "Location"
+    } ],
+    "sentimented_concepts" : [ {
+      "form" : "Happiness",
+      "id" : "60c72b2f9b1e8f001f6472f6",
+      "type" : "Emotion"
+    } ]
+  },
+  "success" : true
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successfully retrieved note
+        <a href="#inline_response_200_5">inline_response_200_5</a>
+    <h4 class="field-label">400</h4>
+    Bad request, invalid note ID
+        <a href="#"></a>
+    <h4 class="field-label">404</h4>
+    Note not found
+        <a href="#"></a>
+    <h4 class="field-label">500</h4>
+    Internal server error
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="notesPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /notes</code></pre></div>
+    <div class="method-summary">Create a new note (<span class="nickname">notesPost</span>)</div>
+    <div class="method-notes">Creates a new note for the authenticated user.</div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#notes_body">notes_body</a> (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+                </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#inline_response_201_1">inline_response_201_1</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "success" : true,
+  "user" : {
+    "userId" : "60c72b2f9b1e8f001f6472f8",
+    "title" : "Meeting Notes",
+    "body" : "Notes from the project meeting on 2024-09-01. Discussed the upcoming deadlines and responsibilities.",
+    "createdAt" : "2024-09-01T10:00:00Z",
+    "sentimentAnalysis" : "60c72b2f9b1e8f001f6472f9"
+  }
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">201</h4>
+    Note successfully created
+        <a href="#inline_response_201_1">inline_response_201_1</a>
+    <h4 class="field-label">400</h4>
+    Bad request, title or body missing
+        <a href="#"></a>
+    <h4 class="field-label">404</h4>
+    Not found, user who created note does not exist
+        <a href="#"></a>
+    <h4 class="field-label">500</h4>
+    Internal server error
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <h1><a name="Subscribe">Subscribe</a></h1>
+  <div class="method"><a name="subscribeUserIdPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /subscribe/{userId}</code></pre></div>
+    <div class="method-summary">Subscribe to another user (<span class="nickname">subscribeUserIdPost</span>)</div>
+    <div class="method-notes">Allows the authenticated user to subscribe to another user specified by <code>userId</code>.</div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">userId (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; The user ID of the user to subscribe to. format: uuid</div>    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#inline_response_200_2">inline_response_200_2</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "updatedSubscriptions" : [ "046b6c7f-0b8a-43b9-b35d-6489e6daee91", "046b6c7f-0b8a-43b9-b35d-6489e6daee91" ],
+  "success" : true,
+  "message" : "message"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Subscription successful
+        <a href="#inline_response_200_2">inline_response_200_2</a>
+    <h4 class="field-label">400</h4>
+    Bad request, user ID not found in request
+        <a href="#"></a>
+    <h4 class="field-label">401</h4>
+    Unauthorized, user not authenticated
+        <a href="#"></a>
+    <h4 class="field-label">404</h4>
+    Not found, target user does not exist
+        <a href="#"></a>
+    <h4 class="field-label">409</h4>
+    User already subscribed
+        <a href="#"></a>
+    <h4 class="field-label">500</h4>
+    Internal server error
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <h1><a name="Users">Users</a></h1>
+  <div class="method"><a name="usersGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /users</code></pre></div>
+    <div class="method-summary">Get subscriptions of the authenticated user (<span class="nickname">usersGet</span>)</div>
+    <div class="method-notes">Retrieves a list of users that the authenticated user is subscribed to.</div>
+
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#inline_response_200_3">inline_response_200_3</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "subscriptions" : [ "046b6c7f-0b8a-43b9-b35d-6489e6daee91", "046b6c7f-0b8a-43b9-b35d-6489e6daee91" ],
+  "success" : true
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successfully retrieved subscriptions
+        <a href="#inline_response_200_3">inline_response_200_3</a>
+    <h4 class="field-label">401</h4>
+    Unauthorized, user not authenticated
+        <a href="#"></a>
+    <h4 class="field-label">404</h4>
+    Not found, user does not exist
+        <a href="#"></a>
+    <h4 class="field-label">500</h4>
+    Internal server error
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+
+  <h2><a name="__Models">Models</a></h2>
+  [ Jump to <a href="#__Methods">Methods</a> ]
+
+  <h3>Table of Contents</h3>
+  <ol>
+    <li><a href="#Note"><code>Note</code></a></li>
+    <li><a href="#SentimentAnalysis"><code>SentimentAnalysis</code></a></li>
+    <li><a href="#SentimentedConcept"><code>SentimentedConcept</code></a></li>
+    <li><a href="#SentimentedEntity"><code>SentimentedEntity</code></a></li>
+    <li><a href="#User"><code>User</code></a></li>
+    <li><a href="#auth_login_body"><code>auth_login_body</code></a></li>
+    <li><a href="#auth_register_body"><code>auth_register_body</code></a></li>
+    <li><a href="#inline_response_200"><code>inline_response_200</code></a></li>
+    <li><a href="#inline_response_200_1"><code>inline_response_200_1</code></a></li>
+    <li><a href="#inline_response_200_2"><code>inline_response_200_2</code></a></li>
+    <li><a href="#inline_response_200_3"><code>inline_response_200_3</code></a></li>
+    <li><a href="#inline_response_200_4"><code>inline_response_200_4</code></a></li>
+    <li><a href="#inline_response_200_5"><code>inline_response_200_5</code></a></li>
+    <li><a href="#inline_response_201"><code>inline_response_201</code></a></li>
+    <li><a href="#inline_response_201_1"><code>inline_response_201_1</code></a></li>
+    <li><a href="#notes_body"><code>notes_body</code></a></li>
+  </ol>
+
+  <div class="model">
+    <h3><a name="Note"><code>Note</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">userId </div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span> The unique identifier of the user who created the note. format: uuid</div>
+<div class="param">title </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The title of the note. </div>
+<div class="param">body </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The body content of the note. </div>
+<div class="param">createdAt </div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span> The timestamp of when the note was created. format: date-time</div>
+<div class="param">sentimentAnalysis (optional)</div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span> The unique identifier of the sentiment analysis related to the note. format: uuid</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="SentimentAnalysis"><code>SentimentAnalysis</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">overall_sentiment (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The overall sentiment of the note. </div>
+<div class="param">agreement (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The agreement level in sentiment analysis. </div>
+<div class="param">subjectivity (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The subjectivity of the note. </div>
+<div class="param">confidence (optional)</div><div class="param-desc"><span class="param-type"><a href="#float">Float</a></span> The confidence level of the sentiment analysis. format: float</div>
+<div class="param">irony (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The detection of irony in the note. </div>
+<div class="param">sentimented_entities (optional)</div><div class="param-desc"><span class="param-type"><a href="#SentimentedEntity">array[SentimentedEntity]</a></span> List of entities with sentiment analysis. </div>
+<div class="param">sentimented_concepts (optional)</div><div class="param-desc"><span class="param-type"><a href="#SentimentedConcept">array[SentimentedConcept]</a></span> List of concepts with sentiment analysis. </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="SentimentedConcept"><code>SentimentedConcept</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">form (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The form or representation of the sentimented concept. </div>
+<div class="param">id (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The unique identifier for the sentimented concept. </div>
+<div class="param">type (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The type of the sentimented concept. </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="SentimentedEntity"><code>SentimentedEntity</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">form (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The form or representation of the sentimented entity. </div>
+<div class="param">id (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The unique identifier for the sentimented entity. </div>
+<div class="param">type (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The type of the sentimented entity. </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="User"><code>User</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">username </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The unique username for the user. </div>
+<div class="param">password </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The password for the user. </div>
+<div class="param">subscriptions (optional)</div><div class="param-desc"><span class="param-type"><a href="#UUID">array[UUID]</a></span> List of user IDs that the user is subscribed to. format: uuid</div>
+<div class="param">lastCreatedNote (optional)</div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span> The ID of the last created note by the user. format: uuid</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="auth_login_body"><code>auth_login_body</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">username </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">password </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="auth_register_body"><code>auth_register_body</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">username </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The username of the new user. </div>
+<div class="param">password </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The password for the new user. </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="inline_response_200"><code>inline_response_200</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">message (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">success (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="inline_response_200_1"><code>inline_response_200_1</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">success (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+<div class="param">user (optional)</div><div class="param-desc"><span class="param-type"><a href="#User">User</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="inline_response_200_2"><code>inline_response_200_2</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">message (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">success (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+<div class="param">updatedSubscriptions (optional)</div><div class="param-desc"><span class="param-type"><a href="#UUID">array[UUID]</a></span>  format: uuid</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="inline_response_200_3"><code>inline_response_200_3</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">success (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+<div class="param">subscriptions (optional)</div><div class="param-desc"><span class="param-type"><a href="#UUID">array[UUID]</a></span>  format: uuid</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="inline_response_200_4"><code>inline_response_200_4</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">success (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+<div class="param">notes (optional)</div><div class="param-desc"><span class="param-type"><a href="#Note">Note</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="inline_response_200_5"><code>inline_response_200_5</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">note (optional)</div><div class="param-desc"><span class="param-type"><a href="#Note">Note</a></span>  </div>
+<div class="param">sentimentAnalysis (optional)</div><div class="param-desc"><span class="param-type"><a href="#SentimentAnalysis">SentimentAnalysis</a></span>  </div>
+<div class="param">success (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="inline_response_201"><code>inline_response_201</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">message (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">success (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+<div class="param">user (optional)</div><div class="param-desc"><span class="param-type"><a href="#User">User</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="inline_response_201_1"><code>inline_response_201_1</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">success (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+<div class="param">user (optional)</div><div class="param-desc"><span class="param-type"><a href="#Note">Note</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="notes_body"><code>notes_body</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">title (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The title of the note. </div>
+          <div class="param-desc"><span class="param-type">example: Meeting Notes</span></div>
+<div class="param">body (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The body content of the note. </div>
+          <div class="param-desc"><span class="param-type">example: Discuss project milestones and deadlines.</span></div>
+    </div>  <!-- field-items -->
+  </div>
+  </body>
+</html>

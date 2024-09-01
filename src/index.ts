@@ -3,6 +3,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import http from 'http';
+import path from 'path';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 import mongoose from 'mongoose';
@@ -16,11 +17,19 @@ import userRouter from './routes/users';
 // import socket.io for web socket functionality
 import { Server } from 'socket.io';
 
+
 // initialize express instance
 const app = express();
 
 // initialize env
 dotenv.config();
+
+// use documentation on api-docs route
+app.get("/api-docs",function(req, res)
+{ 
+  const filePath = path.join(__dirname, 'docs', 'index.html');
+  res.sendFile(filePath);
+});
 
 // use cors for cross origins
 app.use(cors({

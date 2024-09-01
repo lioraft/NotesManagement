@@ -12,6 +12,7 @@ Assumptions I made for this assignment:
 - **src/routes** - definitions of end points for different requests.
 - **src/services** - intermediaries between route handlers and the data models.
 - **src/tests** - contains tests for the assignment.
+- **src/docs** - contains API documentation in yaml, and an html file for api-docs route.
 
 ## How to run
 1. Clone the repository

@@ -1,0 +1,455 @@
+openapi: 3.0.0
+info:
+  title: User Authentication and Notes Management API
+  description: User Authentication and Notes Management API
+  contact:
+    email: lioraftabi@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/LiorAftabi/NotesManagement/1.0.0
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: auth
+  description: Operations for authentication
+- name: notes
+  description: Operations related to notes management
+- name: subscribe
+  description: Operations related to subscribing of users
+- name: users
+  description: Operations related to users
+paths:
+  /auth/register:
+    post:
+      tags:
+      - auth
+      summary: Register a new user
+      description: Creates a new user with a username and password.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/auth_register_body'
+        required: true
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_201'
+        "400":
+          description: "Bad request, missing username or password"
+        "409":
+          description: "Conflict, username already taken"
+        "500":
+          description: Internal server error
+  /auth/login:
+    post:
+      tags:
+      - auth
+      summary: Log in a user
+      description: Authenticates a user and returns a JWT token.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/auth_login_body'
+        required: true
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        "400":
+          description: "Bad request, missing username or password"
+        "401":
+          description: "Unauthorized, invalid username or password"
+        "500":
+          description: Internal server error
+  /profile:
+    get:
+      tags:
+      - auth
+      summary: Retrieve user profile
+      description: "Fetches the user profile including username, subscriptions, and last note sentiment analysis."
+      responses:
+        "200":
+          description: User profile fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+        "400":
+          description: "Bad request, user ID not found in request"
+        "404":
+          description: "Not found, user profile not found"
+        "500":
+          description: Internal server error
+  /subscribe/{userId}:
+    post:
+      tags:
+      - subscribe
+      summary: Subscribe to another user
+      description: Allows the authenticated user to subscribe to another user specified by `userId`.
+      parameters:
+      - name: userId
+        in: path
+        description: The user ID of the user to subscribe to.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: Subscription successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_2'
+        "400":
+          description: "Bad request, user ID not found in request"
+        "401":
+          description: "Unauthorized, user not authenticated"
+        "404":
+          description: "Not found, target user does not exist"
+        "409":
+          description: User already subscribed
+        "500":
+          description: Internal server error
+  /users:
+    get:
+      tags:
+      - users
+      summary: Get subscriptions of the authenticated user
+      description: Retrieves a list of users that the authenticated user is subscribed to.
+      responses:
+        "200":
+          description: Successfully retrieved subscriptions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_3'
+        "401":
+          description: "Unauthorized, user not authenticated"
+        "404":
+          description: "Not found, user does not exist"
+        "500":
+          description: Internal server error
+  /notes:
+    get:
+      tags:
+      - notes
+      summary: Get notes for authenticated user
+      description: Retrieves notes created by the authenticated user or by users they are subscribed to.
+      responses:
+        "200":
+          description: Successfully retrieved notes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_4'
+        "400":
+          description: "Bad request, user not valid"
+        "404":
+          description: "Not found, user does not exist"
+        "500":
+          description: Internal server error
+    post:
+      tags:
+      - notes
+      summary: Create a new note
+      description: Creates a new note for the authenticated user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/notes_body'
+        required: true
+      responses:
+        "201":
+          description: Note successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_201_1'
+        "400":
+          description: "Bad request, title or body missing"
+        "404":
+          description: "Not found, user who created note does not exist"
+        "500":
+          description: Internal server error
+  /notes/{id}:
+    get:
+      tags:
+      - notes
+      summary: Get note by ID
+      description: Retrieves a specific note by its ID.
+      parameters:
+      - name: id
+        in: path
+        description: The ID of the note to retrieve.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: Successfully retrieved note
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_5'
+        "400":
+          description: "Bad request, invalid note ID"
+        "404":
+          description: Note not found
+        "500":
+          description: Internal server error
+components:
+  schemas:
+    Note:
+      required:
+      - body
+      - createdAt
+      - title
+      - userId
+      type: object
+      properties:
+        userId:
+          type: string
+          description: The unique identifier of the user who created the note.
+          format: uuid
+        title:
+          type: string
+          description: The title of the note.
+        body:
+          type: string
+          description: The body content of the note.
+        createdAt:
+          type: string
+          description: The timestamp of when the note was created.
+          format: date-time
+        sentimentAnalysis:
+          type: string
+          description: The unique identifier of the sentiment analysis related to the note.
+          format: uuid
+      example:
+        userId: 60c72b2f9b1e8f001f6472f8
+        title: Meeting Notes
+        body: Notes from the project meeting on 2024-09-01. Discussed the upcoming deadlines and responsibilities.
+        createdAt: 2024-09-01T10:00:00Z
+        sentimentAnalysis: 60c72b2f9b1e8f001f6472f9
+    User:
+      required:
+      - password
+      - username
+      type: object
+      properties:
+        username:
+          type: string
+          description: The unique username for the user.
+        password:
+          type: string
+          description: The password for the user.
+        subscriptions:
+          type: array
+          description: List of user IDs that the user is subscribed to.
+          items:
+            type: string
+            format: uuid
+        lastCreatedNote:
+          type: string
+          description: The ID of the last created note by the user.
+          format: uuid
+      example:
+        username: johndoe
+        password: securepassword123
+        subscriptions:
+        - 60c72b2f9b1e8f001f6472f5
+        - 60c72b2f9b1e8f001f6472f6
+        lastCreatedNote: 60c72b2f9b1e8f001f6472f7
+    SentimentedEntity:
+      type: object
+      properties:
+        form:
+          type: string
+          description: The form or representation of the sentimented entity.
+        id:
+          type: string
+          description: The unique identifier for the sentimented entity.
+        type:
+          type: string
+          description: The type of the sentimented entity.
+      example:
+        form: New York
+        id: 60c72b2f9b1e8f001f6472f5
+        type: Location
+    SentimentedConcept:
+      type: object
+      properties:
+        form:
+          type: string
+          description: The form or representation of the sentimented concept.
+        id:
+          type: string
+          description: The unique identifier for the sentimented concept.
+        type:
+          type: string
+          description: The type of the sentimented concept.
+      example:
+        form: Happiness
+        id: 60c72b2f9b1e8f001f6472f6
+        type: Emotion
+    SentimentAnalysis:
+      type: object
+      properties:
+        overall_sentiment:
+          type: string
+          description: The overall sentiment of the note.
+        agreement:
+          type: string
+          description: The agreement level in sentiment analysis.
+        subjectivity:
+          type: string
+          description: The subjectivity of the note.
+        confidence:
+          type: number
+          description: The confidence level of the sentiment analysis.
+          format: float
+        irony:
+          type: string
+          description: The detection of irony in the note.
+        sentimented_entities:
+          type: array
+          description: List of entities with sentiment analysis.
+          items:
+            $ref: '#/components/schemas/SentimentedEntity'
+        sentimented_concepts:
+          type: array
+          description: List of concepts with sentiment analysis.
+          items:
+            $ref: '#/components/schemas/SentimentedConcept'
+      example:
+        overall_sentiment: Positive
+        agreement: High
+        subjectivity: Subjective
+        confidence: 0.85
+        irony: None
+        sentimented_entities:
+        - form: New York
+          id: 60c72b2f9b1e8f001f6472f5
+          type: Location
+        sentimented_concepts:
+        - form: Happiness
+          id: 60c72b2f9b1e8f001f6472f6
+          type: Emotion
+    auth_register_body:
+      required:
+      - password
+      - username
+      type: object
+      properties:
+        username:
+          type: string
+          description: The username of the new user.
+        password:
+          type: string
+          description: The password for the new user.
+    inline_response_201:
+      type: object
+      properties:
+        message:
+          type: string
+        success:
+          type: boolean
+        user:
+          $ref: '#/components/schemas/User'
+    auth_login_body:
+      required:
+      - password
+      - username
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    inline_response_200:
+      type: object
+      properties:
+        message:
+          type: string
+        success:
+          type: boolean
+    inline_response_200_1:
+      type: object
+      properties:
+        success:
+          type: boolean
+        user:
+          $ref: '#/components/schemas/User'
+    inline_response_200_2:
+      type: object
+      properties:
+        message:
+          type: string
+        success:
+          type: boolean
+        updatedSubscriptions:
+          type: array
+          items:
+            type: string
+            format: uuid
+    inline_response_200_3:
+      type: object
+      properties:
+        success:
+          type: boolean
+        subscriptions:
+          type: array
+          items:
+            type: string
+            format: uuid
+    inline_response_200_4:
+      type: object
+      properties:
+        success:
+          type: boolean
+        notes:
+          $ref: '#/components/schemas/Note'
+    notes_body:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of the note.
+          example: Meeting Notes
+        body:
+          type: string
+          description: The body content of the note.
+          example: Discuss project milestones and deadlines.
+    inline_response_201_1:
+      type: object
+      properties:
+        success:
+          type: boolean
+        user:
+          $ref: '#/components/schemas/Note'
+    inline_response_200_5:
+      type: object
+      properties:
+        note:
+          $ref: '#/components/schemas/Note'
+        sentimentAnalysis:
+          $ref: '#/components/schemas/SentimentAnalysis'
+        success:
+          type: boolean

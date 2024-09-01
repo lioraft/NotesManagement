@@ -35,7 +35,7 @@ describe('User Service', () => {
       const savedUser = await user.save();
       
       // retrieve the user by ID
-      const foundUser = await userService.getUserByID(savedUser._id as mongoose.Types.ObjectId);
+      const foundUser = await userService.getUserByID(savedUser._id.toString());
       
       // verify the retrieved user
       expect(foundUser).not.toBeNull();
@@ -46,13 +46,13 @@ describe('User Service', () => {
     // invalid case test: fetching non existent user
     it('should throw not found error if user ID is not found', async () => {
       const validId = new mongoose.Types.ObjectId();
-      await expect(userService.getUserByID(validId)).rejects.toThrowError(NotFoundError);
+      await expect(userService.getUserByID(validId.toString())).rejects.toThrowError(NotFoundError);
     });
 
     // invalid case test: fetching invalid user id
     it('should throw validation error for malformed IDs', async () => {
       const malformedId = '123'; // not a valid ObjectId
-      await expect(userService.getUserByID(malformedId as unknown as mongoose.Types.ObjectId)).rejects.toThrowError(ValidationError);
+      await expect(userService.getUserByID(malformedId)).rejects.toThrowError(ValidationError);
     });
   });
 
@@ -109,13 +109,13 @@ describe('User Service', () => {
       await user.save();
 
       // fetch user profile and check it's validity
-      const userProfile = await userService.getUserProfile(user._id as mongoose.Types.ObjectId);
+      const userProfile = await userService.getUserProfile(user._id.toString());
       expect(userProfile).not.toBeNull(); // check its not null
       expect(userProfile.username).toBe(user.username); // check correct username
       expect(userProfile.password).toBeUndefined(); // check password was not fetched
       if (userProfile.lastCreatedNote) { // check last note it populated and returned correctly
         expect(userProfile.lastCreatedNote).toBeInstanceOf(NoteModel);
-        expect(((userProfile.lastCreatedNote as any)._id as mongoose.Types.ObjectId).toString()).toEqual(savedNote._id.toString());
+        expect(((userProfile.lastCreatedNote as any)._id).toString()).toEqual(savedNote._id.toString());
       } else {
         throw new Error("lastCreatedNote is not populated");
       }
@@ -134,13 +134,13 @@ describe('User Service', () => {
     // invalid test case: user doesn't exist
       it('should throw not found error for non existent user', async () => {
         const validId = new mongoose.Types.ObjectId();
-        await expect(userService.getUserProfile(validId)).rejects.toThrowError(NotFoundError);
+        await expect(userService.getUserProfile(validId.toString())).rejects.toThrowError(NotFoundError);
       });
 
     // invalid test case: invalid userid
     it('should throw validation error for invalid user ID', async () => {
       const invalidId = '123'; // not a valid ObjectId
-      await expect(userService.getUserProfile(invalidId as unknown as mongoose.Types.ObjectId)).rejects.toThrowError(ValidationError);
+      await expect(userService.getUserProfile(invalidId)).rejects.toThrowError(ValidationError);
     });
   });
 
@@ -153,7 +153,7 @@ describe('User Service', () => {
       (user.subscriptions as mongoose.Types.ObjectId[]).push(subscriptionUser._id as mongoose.Types.ObjectId);
       await user.save();
 
-      const subscriptions = await userService.getSubscriptions(user._id as mongoose.Types.ObjectId);
+      const subscriptions = await userService.getSubscriptions(user._id.toString());
       expect(subscriptions).toHaveLength(1);
       expect(subscriptions[0].username).toBe(subscriptionUser.username);
     });
@@ -161,13 +161,13 @@ describe('User Service', () => {
     // invalid test case: user id is invalid
     it('should throw validation error for invalid user ID', async () => {
       const invalidId = '123'; // not a valid ObjectId
-      await expect(userService.getSubscriptions(invalidId as unknown as mongoose.Types.ObjectId)).rejects.toThrowError(ValidationError);
+      await expect(userService.getSubscriptions(invalidId)).rejects.toThrowError(ValidationError);
     });
 
     // invalid test case: user doesn't exist
     it('should throw not found error for non existent user', async () => {
       const validId = new mongoose.Types.ObjectId();
-      await expect(userService.getSubscriptions(validId)).rejects.toThrowError(NotFoundError);
+      await expect(userService.getSubscriptions(validId.toString())).rejects.toThrowError(NotFoundError);
     });
 
     // valid test case: user has no subscriptions
@@ -175,7 +175,7 @@ describe('User Service', () => {
       const user = new UserModel({ username: 'testuser', password: 'password123', subscriptions: [] });
       await user.save();
 
-      const subscriptions = await userService.getSubscriptions(user._id as mongoose.Types.ObjectId);
+      const subscriptions = await userService.getSubscriptions(user._id.toString());
       expect(subscriptions).toEqual([]);
     });
   });
@@ -188,7 +188,7 @@ describe('User Service', () => {
       await subscriber.save();
       await subscriptionUser.save();
 
-      const subscriptions = await userService.subscribeToUser(subscriber._id as mongoose.Types.ObjectId, subscriptionUser._id as mongoose.Types.ObjectId);
+      const subscriptions = await userService.subscribeToUser(subscriber._id.toString(), subscriptionUser._id.toString());
       expect(subscriptions).toHaveLength(1);
       expect(subscriptions[0].toString()).toBe(subscriptionUser._id.toString());
     });
@@ -196,14 +196,14 @@ describe('User Service', () => {
     // invalid test case: one of ids is invalid
     it('should throw validation error for invalid user IDs', async () => {
       const invalidId = '123'; // not a valid ObjectId
-      await expect(userService.subscribeToUser(invalidId as unknown as mongoose.Types.ObjectId, invalidId as unknown as mongoose.Types.ObjectId)).rejects.toThrowError(ValidationError);
+      await expect(userService.subscribeToUser(invalidId, invalidId)).rejects.toThrowError(ValidationError);
     });
 
     // invalid test case: user tries to subscribe to themselves
     it('should throw validation error if user subscribes to themselves', async () => {
       const user = new UserModel({ username: 'testuser', password: 'password123' });
       await user.save();
-      await expect(userService.subscribeToUser(user._id as mongoose.Types.ObjectId, user._id as mongoose.Types.ObjectId)).rejects.toThrowError(ValidationError);
+      await expect(userService.subscribeToUser(user._id.toString(), user._id.toString())).rejects.toThrowError(ValidationError);
     });
 
     // invalid test case: user doesn't exist
@@ -211,7 +211,7 @@ describe('User Service', () => {
       const subscriber = new UserModel({ username: 'subscriber', password: 'password123', subscriptions: [] });
       await subscriber.save();
       const nonExistUser = new mongoose.Types.ObjectId(); // non existent user id
-      await expect(userService.subscribeToUser(subscriber._id as mongoose.Types.ObjectId, nonExistUser)).rejects.toThrowError(NotFoundError);
+      await expect(userService.subscribeToUser(subscriber._id.toString(), nonExistUser.toString())).rejects.toThrowError(NotFoundError);
     });
   });
 });

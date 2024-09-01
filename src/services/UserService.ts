@@ -2,9 +2,6 @@ import UserModel from '../models/UserModel';
 import mongoose from 'mongoose';
 import { ValidationError, NotFoundError, ConflictError } from '../error'
 
-// helper function to validate MongoDB ObjectId
-const isValidObjectId = (id: any): boolean => mongoose.Types.ObjectId.isValid(id);
-
 // get user by username
 export const getUserByUsername = async (username: string) => {
   // if no username or invalid type, throw error
@@ -20,9 +17,16 @@ export const getUserByUsername = async (username: string) => {
 };
 
 // get user by id
-export const getUserByID = async (userId: mongoose.Types.ObjectId | string) => {
-  // if input invalid, throw error
-  if (!isValidObjectId(userId)) {
+export const getUserByID = async (userIdString: string) => {
+  // if no id, throw error
+  if (!userIdString) {
+    throw new ValidationError('Invalid UserID');
+  }
+  // try to convert to moongose object id, if can't - throw validation error
+  let userId;
+  try {
+    userId = new mongoose.Types.ObjectId(userIdString);
+  } catch(error) {
     throw new ValidationError('Invalid ObjectId');
   }
   const user = await UserModel.findById(userId).exec();
@@ -56,10 +60,17 @@ export const addUser = async (record: { username: string; password: string }) =>
 };
 
 // get all subscriptions for a user by user id
-export const getSubscriptions = async (userId: mongoose.Types.ObjectId) => {
-   // validate id
-    if (!isValidObjectId(userId)) {
-      throw new ValidationError('Invalid user ID format');
+export const getSubscriptions = async (userIdString: string) => {
+    // if no id, throw error
+    if (!userIdString) {
+      throw new ValidationError('Invalid ObjectId');
+    }
+    // try to convert to moongose object id, if can't - throw validation error
+    let userId;
+    try {
+      userId = new mongoose.Types.ObjectId(userIdString);
+    } catch(error) {
+      throw new ValidationError('Invalid ObjectId');
     }
     // find the user by user id and populate the subscriptions
     const user = await UserModel.findById(userId).populate('subscriptions', 'username');
@@ -72,10 +83,19 @@ export const getSubscriptions = async (userId: mongoose.Types.ObjectId) => {
 };
 
 // subscribe a user to another user
-export const subscribeToUser = async (subscriberUserID: mongoose.Types.ObjectId, subscriptionUserID: mongoose.Types.ObjectId) => {
-  // check valid ids
-  if (!isValidObjectId(subscriberUserID) || !isValidObjectId(subscriptionUserID)) {
-    throw new ValidationError('Invalid users ID format');
+export const subscribeToUser = async (subscriberUserStr: string, subscriptionUserStr: string) => {
+    // if no id, throw error
+    if (!subscriberUserStr || !subscriptionUserStr) {
+      throw new ValidationError('Invalid ObjectId');
+    }
+  // try to convert to moongose object id, if can't - throw validation error
+  let subscriberUserID, subscriptionUserID;
+  try {
+    // convert to moongose object id
+    subscriberUserID = new mongoose.Types.ObjectId(subscriberUserStr);
+    subscriptionUserID = new mongoose.Types.ObjectId(subscriptionUserStr);
+  } catch(error) {
+    throw new ValidationError('Invalid ObjectId');
   }
   // check ids are different so users won't subscribe to themselves
   if (subscriberUserID.equals(subscriptionUserID)) {
@@ -105,10 +125,17 @@ export const subscribeToUser = async (subscriberUserID: mongoose.Types.ObjectId,
   return subscriber.subscriptions;
 };
 
-export const getUserProfile = async (userId: mongoose.Types.ObjectId) => {
-  // validate id
-  if (!isValidObjectId(userId)) {
-    throw new ValidationError('Invalid user ID format');
+export const getUserProfile = async (userIdString: string) => {
+  // if no id, throw error
+  if (!userIdString) {
+    throw new ValidationError('Invalid ObjectId');
+  }
+  // try to convert to moongose object id, if can't - throw validation error
+  let userId;
+  try {
+    userId = new mongoose.Types.ObjectId(userIdString);
+  } catch(error) {
+    throw new ValidationError('Invalid ObjectId');
   }
   const user = await UserModel.findById(userId)
     .select('-password')
