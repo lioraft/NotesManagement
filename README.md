@@ -27,4 +27,7 @@ Assumptions I made for this assignment:
 4. Now you can start sending requests with tools like Postman
    ```bash
    http://localhost:3500/<insert end point>
+5. To run tests, run the following command
+   ```bash
+   npm test
    

@@ -8,5 +8,5 @@
     "baseUrl": "src",
     "sourceMap": true,
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "src/jest.setup.ts"]
 }
