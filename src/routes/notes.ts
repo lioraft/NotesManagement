@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import mongoose from 'mongoose';
 import { getNoteById, getNotes, addNote } from '../services/NoteService';
+import { NotFoundError, ValidationError } from '../error';
 
 // create a router
 const noteRouter = Router();
@@ -23,10 +24,6 @@ noteRouter.post('/', async (req, res) => {
             // create a new note with the converted ObjectId
             const newNote = { userId, title, body };
             const createdNote = await addNote(newNote);
-            // if note is null, return can't create
-            if (!newNote) {
-                res.status(400).json({ success: false, message: 'Invalid input data' });
-            }
             // if success log to console and send
             console.log("A new note: ", createdNote._id," was created by:", userIdString)
             res.status(201).json({success: true, createdNote});
@@ -34,8 +31,15 @@ noteRouter.post('/', async (req, res) => {
             res.status(400).json({ error: 'User ID not found in request' });
         }
     } catch (error) {
-        console.log("Error while creating a new note");
-        res.status(500).json({ error: 'Internal error during creation of note' });
+        // log error to console
+        console.error('Error while adding a new note:', error);
+        if (error instanceof ValidationError) {
+            res.status(400).json({ error: error.message });
+        } else if (error instanceof NotFoundError) {
+            res.status(404).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: 'Internal error during note creation' });
+        }
     }
 });
 
@@ -58,8 +62,15 @@ noteRouter.get('/', async (req, res) => {
         res.status(400).json({ error: 'User ID not found in request' });
       }
     } catch (error) {
-        console.log("Failed to fetch notes");
-        res.status(500).json({ success: false, message: 'Failed to retrieve notes' });
+        // log error to console
+        console.error('Error while fetching notes:', error);
+        if (error instanceof ValidationError) {
+            res.status(400).json({ error: error.message });
+        } else if (error instanceof NotFoundError) {
+            res.status(404).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: 'Internal error while fetching notes' });
+        }
     }
   });
 
@@ -74,17 +85,20 @@ noteRouter.get('/:id', async (req, res) => {
         }
         // retrieve the note using the ID
         const note = await getNoteById(new mongoose.Types.ObjectId(id));
-        // if the note is not found, return a 404 error
-        if (!note) {
-            return res.status(404).send({ message: 'Note not found', success: false });
-        }
         // log to console
         console.log("fetched note:", id)
         // return the found note
         res.status(200).send({ note, success: true });
     } catch (error) {
-        console.log("Failed to fetch a note");
-        res.status(500).send({ message: 'Internal server error while retrieving note', success: false });
+        // log error to console
+        console.error('Internal server error while retrieving note:', error);
+        if (error instanceof ValidationError) {
+            res.status(400).json({ error: error.message });
+        } else if (error instanceof NotFoundError) {
+            res.status(404).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: 'Internal error while retrieving note' });
+        }
     }
 });
 
