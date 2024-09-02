@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { getNoteById, getNotes, addNote } from '../services/NoteService';
-import { returnError } from '../error';
 
 // create a router
 const noteRouter = Router();
@@ -29,7 +28,9 @@ noteRouter.post('/', async (req, res) => {
     } catch (error) {
         // log error to console
         console.error('Error while adding a new note:', error);
-        return returnError(error, res);
+        const statusCode = error.statusCode || 500;
+        const message = error.message || 'Internal server error';
+        res.status(statusCode).json({message, success: false});
     }
 });
 
@@ -52,7 +53,9 @@ noteRouter.get('/', async (req, res) => {
     } catch (error) {
         // log error to console
         console.error('Error while fetching notes:', error);
-        return returnError(error, res);
+        const statusCode = error.statusCode || 500;
+        const message = error.message || 'Internal server error';
+        res.status(statusCode).json({message, success: false});
     }
   });
 
@@ -69,8 +72,10 @@ noteRouter.get('/:id', async (req, res) => {
         res.status(200).send({ note, sentimentAnalysis, success: true });
     } catch (error) {
         // log error to console
-        console.error('Internal server error while retrieving note:', error);
-        return returnError(error, res);
+        console.error('Error while retrieving a note:', error);
+        const statusCode = error.statusCode || 500;
+        const message = error.message || 'Internal server error';
+        res.status(statusCode).json({message, success: false});
     }
 });
 

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { getUserByUsername, addUser, getUserProfile } from '../services/UserService';
-import { returnError, NotFoundError } from '../error';
+import { NotFoundError } from '../error';
 import { generateToken } from '../services/jwtUtils'
 
 // create a router
@@ -107,8 +107,9 @@ authRouter.get('/profile', async (req, res) => {
     } catch (error) {
         // if error, return it and log to console
         console.log("Error while fetching user profile:", error);
-        // return error message
-        return returnError(error, res);
+        const statusCode = error.statusCode || 500;
+        const message = error.message || 'Internal server error';
+        res.status(statusCode).json({message, success: false});
     }
   });
 

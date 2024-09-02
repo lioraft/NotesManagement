@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { getSubscriptions } from '../services/UserService';
-import { returnError } from '../error';
 
 
 const userRouter = Router();
@@ -22,7 +21,9 @@ userRouter.get('/', async (req, res) => {
         res.status(200).json({ success: true, subscriptions });
     } catch (error) {
         console.log("failed fetching users");
-        return returnError(error, res);
+        const statusCode = error.statusCode || 500;
+        const message = error.message || 'Internal server error';
+        res.status(statusCode).json({message, success: false});
     }
 });
 

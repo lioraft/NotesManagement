@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { subscribeToUser } from '../services/UserService';
-import { returnError } from '../error';
 
 const subRouter = Router();
 
@@ -24,7 +23,9 @@ subRouter.post('/:userId', async (req, res) => {
     } catch (error) {
         // if error, return correct error message and code
         console.error('Error subscribing to user:', error);
-        return returnError(error, res);
+        const statusCode = error.statusCode || 500;
+        const message = error.message || 'Internal server error';
+        res.status(statusCode).json({message, success: false});
     }
 });
 
