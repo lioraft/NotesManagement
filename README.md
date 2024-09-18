@@ -12,7 +12,7 @@
 ## How to run
 1. Clone the repository
    ```bash
-   git clone https://github.com/lioraft/BIGVU_Assignment.git
+   git clone https://github.com/lioraft/NotesManagement.git
 2. open terminal and install dependencies
    ```bash
    npm install
