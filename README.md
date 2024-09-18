@@ -1,12 +1,12 @@
 # Notes Management
 
 ## Directories
-- **src** - contains the source code of the assignment.
+- **src** - contains the source code files.
 - **src/schemas** - mongoose schemas that define the shape of the documents in collections.
 - **src/models** - mongoose models that will be used to create instances (documents).
 - **src/routes** - definitions of end points for different requests.
 - **src/services** - intermediaries between route handlers and the data models.
-- **src/tests** - contains tests for the assignment.
+- **src/tests** - contains test files.
 - **src/docs** - contains API documentation in yaml, and an html file for api-docs route.
 
 ## How to run
